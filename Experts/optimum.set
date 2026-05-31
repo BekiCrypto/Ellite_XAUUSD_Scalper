@@ -1,0 +1,27 @@
+; === Systems Developer & Support ===
+InpDevName=Beki
+InpDevTelegram=t.me/tradelikeb
+InpDevEmail=Bekicrypto@gmail.com
+InpDevWhatsApp=+971527663165
+; === Risk Management ===
+InpRiskPercent=15.0
+InpMinLotSize=0.01
+InpMaxDailyDrawdown=10.0
+InpMaxDailyProfit=25.0
+InpMaxConsecutiveLosses=4
+InpMaxConcurrentTrades=5
+InpMaxLatencyMs=500
+InpMaxSlippageThrottle=3.0
+; === Environmental Filters ===
+InpEnableSessionFilter=true
+InpEnableNewsFilter=true
+InpNewsMinutesBefore=30
+InpNewsMinutesAfter=30
+InpMaxSpreadPoints=50
+InpMaxSlippagePoints=5
+InpMinConfidence=65.0
+InpTrailingActivationATR=1.2
+; === Identification ===
+InpMagicNumber=133777
+InpTradeComment=EliteXAUScalper
+InpAuthToken=ELITE_GATEWAY_TOKEN_XYZ

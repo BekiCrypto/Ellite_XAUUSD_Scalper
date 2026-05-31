@@ -1,0 +1,19 @@
+version: '3.8'
+
+services:
+  elite-bridge-gateway:
+    container_name: elite_xauusd_bridge
+    build:
+      context: ./EliteXAUScalperApp
+      dockerfile: Dockerfile
+    ports:
+      - "3000:3000"
+    environment:
+      - PORT=3000
+      - AUTH_TOKEN=ELITE_GATEWAY_TOKEN_XYZ
+    restart: unless-stopped
+    deploy:
+      resources:
+        limits:
+          cpus: '0.5'
+          memory: 256M

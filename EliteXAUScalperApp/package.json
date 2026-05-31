@@ -1,0 +1,11 @@
+{
+  "name": "elite-xauusd-scalper-app",
+  "version": "1.0.0",
+  "description": "Elite XAUUSD Mobile Cockpit & API Gateway Bridge",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "author": "Beki",
+  "license": "ISC"
+}

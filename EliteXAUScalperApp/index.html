@@ -1,0 +1,615 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ELITE XAUUSD - Mobile Command Center</title>
+    <!-- Premium Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Space+Grotesk:wght@400;500;700&display=swap" rel="stylesheet">
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Stylesheet -->
+    <link rel="stylesheet" href="app.css">
+</head>
+<body>
+    <div class="glass-bg"></div>
+    
+    <div class="app-outer-container">
+        <!-- Desktop Bezel Wrapper -->
+        <div class="phone-shell">
+            <!-- Hardware Details for Mock Bezel -->
+            <div class="phone-notch"></div>
+            <div class="phone-status-bar">
+                <span class="status-time" id="mock-clock">11:05</span>
+                <div class="status-icons">
+                    <i class="fa-solid fa-signal"></i>
+                    <i class="fa-solid fa-wifi"></i>
+                    <i class="fa-solid fa-battery-three-quarters"></i>
+                </div>
+            </div>
+            
+            <!-- Phone Screen Viewport -->
+            <div class="phone-screen">
+                
+                <!-- 0. SPLASH SCREEN VIEW -->
+                <div id="view-splash" class="screen-view active">
+                    <div class="splash-content">
+                        <div class="splash-logo">
+                            <i class="fa-solid fa-compass-drafting logo-glow-icon"></i>
+                        </div>
+                        <h1 class="splash-title">ELITE XAUUSD</h1>
+                        <p class="splash-subtitle">Autonomous Scalping Engine</p>
+                        <div class="splash-loader">
+                            <div class="loader-progress" id="splash-bar"></div>
+                        </div>
+                        <span class="splash-status" id="splash-status-text">Securing neural link...</span>
+                    </div>
+                </div>
+
+                <!-- 1. AUTH SCREEN VIEW (GOOGLE SSO ONBOARDING) -->
+                <div id="view-auth" class="screen-view">
+                    <div class="auth-header">
+                        <i class="fa-solid fa-shield-halved auth-icon"></i>
+                        <h2>Operator Onboarding</h2>
+                        <p>Authenticate your cognitive trading cockpit</p>
+                    </div>
+
+                    <!-- Premium Google SSO Integration -->
+                    <div class="sso-container">
+                        <button class="btn btn-google-sso" onclick="handleGoogleSSO()">
+                            <svg class="google-icon" viewBox="0 0 24 24" width="18" height="18" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/>
+                                <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/>
+                                <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.06H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.94l2.85-2.22.81-.63z" fill="#FBBC05"/>
+                                <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.06l3.66 2.84c.87-2.6 3.3-4.52 6.16-4.52z" fill="#EA4335"/>
+                            </svg>
+                            SIGN IN WITH GOOGLE
+                        </button>
+                    </div>
+
+                    <div class="auth-divider">
+                        <span>OR USE BACKUP OPERATOR CARD</span>
+                    </div>
+                    
+                    <div class="auth-tabs">
+                        <button class="auth-tab-btn active" id="btn-tab-signin" onclick="switchAuthTab('signin')">Sign In</button>
+                        <button class="auth-tab-btn" id="btn-tab-signup" onclick="switchAuthTab('signup')">Sign Up</button>
+                    </div>
+
+                    <!-- Sign In Form -->
+                    <div class="auth-form-container active" id="form-signin">
+                        <div class="input-group">
+                            <label for="signin-email"><i class="fa-solid fa-envelope"></i> Operator Email</label>
+                            <input type="email" id="signin-email" placeholder="operator@elite-systems.com" value="operator@elite-systems.com">
+                        </div>
+                        <div class="input-group">
+                            <label for="signin-pass"><i class="fa-solid fa-key"></i> Passcode</label>
+                            <input type="password" id="signin-pass" placeholder="••••••••" value="password123">
+                        </div>
+                        <button class="btn btn-auth" onclick="handleAuth('signin')">
+                            <i class="fa-solid fa-right-to-bracket"></i> VERIFY OPERATOR ID
+                        </button>
+                    </div>
+
+                    <!-- Sign Up Form -->
+                    <div class="auth-form-container" id="form-signup">
+                        <div class="input-group">
+                            <label for="signup-name"><i class="fa-solid fa-user"></i> Full Name</label>
+                            <input type="text" id="signup-name" placeholder="Beki Operator">
+                        </div>
+                        <div class="input-group">
+                            <label for="signup-email"><i class="fa-solid fa-envelope"></i> Email Address</label>
+                            <input type="email" id="signup-email" placeholder="name@domain.com">
+                        </div>
+                        <div class="input-group">
+                            <label for="signup-pass"><i class="fa-solid fa-key"></i> Access Code</label>
+                            <input type="password" id="signup-pass" placeholder="Create passcode">
+                        </div>
+                        <button class="btn btn-auth" onclick="handleAuth('signup')">
+                            <i class="fa-solid fa-user-plus"></i> CREATE OPERATOR ACCOUNT
+                        </button>
+                    </div>
+
+                    <!-- SSO Overlay loader simulation -->
+                    <div class="sso-overlay" id="sso-loading-overlay">
+                        <div class="sso-loader-card">
+                            <i class="fa-brands fa-google fa-spin google-spin-icon"></i>
+                            <h3>Authenticating with Google...</h3>
+                            <p>Establishing encrypted OAuth handshake</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 1.1 SUBSCRIPTION TIER SELECTOR VIEW -->
+                <div id="view-tiers" class="screen-view">
+                    <div class="auth-header">
+                        <i class="fa-solid fa-gem license-icon"></i>
+                        <h2>Select Subscription</h2>
+                        <p>Unlock the institutional autonomous M1-M5 scalping engine</p>
+                    </div>
+
+                    <div class="pricing-tiers">
+                        <!-- Monthly Tier Card -->
+                        <div class="tier-card" id="tier-monthly" onclick="selectSubscription('monthly')">
+                            <div class="tier-header">
+                                <h3>Monthly Scalper</h3>
+                                <span class="price">$20<span>/month</span></span>
+                            </div>
+                            <ul class="tier-features">
+                                <li><i class="fa-solid fa-circle-check"></i> Standard XAUUSD M5 execution</li>
+                                <li><i class="fa-solid fa-circle-check"></i> All 6 core strategy models</li>
+                                <li><i class="fa-solid fa-circle-check"></i> Real-time spread & latency sync</li>
+                                <li><i class="fa-solid fa-circle-check"></i> Live neural signal stream logs</li>
+                            </ul>
+                            <button class="btn btn-tier-action">CHOOSE MONTHLY</button>
+                        </div>
+
+                        <!-- Annual Tier Card (Glowing Highlights) -->
+                        <div class="tier-card annual active" id="tier-annual" onclick="selectSubscription('annual')">
+                            <div class="annual-badge">BEST VALUE - SAVE 17%</div>
+                            <div class="tier-header">
+                                <h3>Annual Institutional</h3>
+                                <span class="price">$200<span>/year</span></span>
+                            </div>
+                            <ul class="tier-features">
+                                <li><i class="fa-solid fa-circle-check"></i> Priority low-latency execution</li>
+                                <li><i class="fa-solid fa-circle-check"></i> London & NY session expansion</li>
+                                <li><i class="fa-solid fa-circle-check"></i> High-impact USD news shield</li>
+                                <li><i class="fa-solid fa-circle-check"></i> Multi-terminal VPS sync ready</li>
+                            </ul>
+                            <button class="btn btn-tier-action">CHOOSE ANNUAL</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 1.2 CRYPTO CHECKOUT VIEW (USDT BEP20) -->
+                <div id="view-checkout" class="screen-view">
+                    <div class="auth-header">
+                        <i class="fa-solid fa-wallet mt5-icon"></i>
+                        <h2>Crypto Checkout</h2>
+                        <p>Complete license activation with USDT on BSC Network</p>
+                    </div>
+
+                    <div class="mobile-card checkout-summary-card">
+                        <div class="c-header">
+                            <span class="sub-lbl" id="checkout-plan-name">Annual Subscription</span>
+                            <span class="sub-val text-gold" id="checkout-plan-price">200.00 USDT</span>
+                        </div>
+                        <div class="c-body">
+                            <span class="net-lbl">Network</span>
+                            <span class="net-val">BNB Smart Chain (BEP20)</span>
+                        </div>
+                    </div>
+
+                    <!-- Checkout Details Form -->
+                    <div class="checkout-details-form" id="checkout-payment-box">
+                        <div class="qr-mock-box">
+                            <div class="qr-graphic">
+                                <i class="fa-solid fa-qrcode"></i>
+                                <span class="qr-glow-layer"></span>
+                            </div>
+                            <p class="qr-tip">Scan QR Code or copy wallet address below</p>
+                        </div>
+
+                        <div class="input-group">
+                            <label><i class="fa-solid fa-wallet text-gold"></i> Target USDT BEP20 Address</label>
+                            <div class="copy-input-container">
+                                <input type="text" id="checkout-wallet-address" value="0x71C7656EC7ab88b098defB751B7401B5f6d8976F" readonly>
+                                <button class="btn btn-copy" onclick="copyWalletAddress()">
+                                    <i class="fa-solid fa-copy"></i>
+                                </button>
+                            </div>
+                        </div>
+
+                        <div class="input-group">
+                            <label for="checkout-txhash"><i class="fa-solid fa-receipt text-cyan"></i> Transaction Hash (TxID)</label>
+                            <input type="text" id="checkout-txhash" placeholder="Paste BSC txhash (e.g. 0x3a...)">
+                            <span class="input-tip">Required to validate payment verification blocks</span>
+                        </div>
+
+                        <button class="btn btn-auth btn-confirm-pay" onclick="confirmUSDTPayment()">
+                            <i class="fa-solid fa-circle-check"></i> CONFIRM USDT PAYMENT
+                        </button>
+                    </div>
+
+                    <!-- Blockchain verification loader -->
+                    <div class="blockchain-verifier" id="checkout-blockchain-verifier">
+                        <div class="bc-spin-container">
+                            <i class="fa-solid fa-cubes fa-spin bc-spin-icon"></i>
+                            <span class="pulse-ring"></span>
+                        </div>
+                        <h3>Confirming Blockchain Blocks...</h3>
+                        <p id="verifier-status-text">Broadcasting transaction to BSC networks...</p>
+                        <div class="progress-bar-container">
+                            <div class="bc-progress-bar" id="bc-progress-bar"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 2. LICENSE ACTIVATION SCREEN (FALLBACK BACKUP OPTION) -->
+                <div id="view-license" class="screen-view">
+                    <div class="auth-header">
+                        <i class="fa-solid fa-certificate license-icon"></i>
+                        <h2>License Key Backup</h2>
+                        <p>Sync registered engine keys to compile EA</p>
+                    </div>
+                    
+                    <div class="license-status-alert">
+                        <i class="fa-solid fa-triangle-exclamation"></i>
+                        <span>System locked: Unregistered Engine Key</span>
+                    </div>
+
+                    <div class="license-form">
+                        <div class="input-group">
+                            <label for="license-key"><i class="fa-solid fa-passport"></i> Engine License Key</label>
+                            <input type="text" id="license-key" placeholder="XXXX-XXXX-XXXX-XXXX" value="XAU-ELITE-9988">
+                            <span class="input-tip">Enter key or copy from your inbox tab</span>
+                        </div>
+                        
+                        <button class="btn btn-auth" onclick="handleLicenseActivation()">
+                            <i class="fa-solid fa-circle-check"></i> REGISTER COGNITIVE ENGINE
+                        </button>
+                    </div>
+                </div>
+
+                <!-- 3. MT5 SERVER CONNECTION VIEW -->
+                <div id="view-mt5" class="screen-view">
+                    <div class="auth-header">
+                        <i class="fa-solid fa-network-wired mt5-icon"></i>
+                        <h2>Terminal Link</h2>
+                        <p>Sync MT5 server details to initiate scalping</p>
+                    </div>
+
+                    <!-- Connection settings form -->
+                    <div class="mt5-form" id="mt5-setup-form">
+                        <div class="input-group">
+                            <label for="mt5-server"><i class="fa-solid fa-server"></i> Broker Server Name</label>
+                            <input type="text" id="mt5-server" placeholder="e.g. ICMarkets-MT5-Live" value="ICMarkets-MT5-Live">
+                        </div>
+                        <div class="input-group">
+                            <label for="mt5-login"><i class="fa-solid fa-fingerprint"></i> Trading Account Login ID</label>
+                            <input type="number" id="mt5-login" placeholder="e.g. 8829410" value="8829410">
+                        </div>
+                        <div class="input-group">
+                            <label for="mt5-pass"><i class="fa-solid fa-lock"></i> Account Password</label>
+                            <input type="password" id="mt5-pass" placeholder="••••••••" value="securepassword">
+                        </div>
+                        <div class="input-group">
+                            <label for="mt5-leverage"><i class="fa-solid fa-bolt"></i> Account Leverage</label>
+                            <select id="mt5-leverage">
+                                <option value="1:100">1:100 (Standard)</option>
+                                <option value="1:200">1:200 (Active)</option>
+                                <option value="1:500" selected>1:500 (Aggressive Scalp)</option>
+                                <option value="1:1000">1:1000 (Extreme Risk)</option>
+                            </select>
+                        </div>
+                        <div class="whitelist-helper-card">
+                            <i class="fa-solid fa-circle-info"></i>
+                            <div class="wh-body">
+                                <h4>MT5 Whitelist URL Requirement</h4>
+                                <p>To authorize loopback sync, add this target URL to your MT5 whitelisted WebRequest URLs under <strong>Tools &rarr; Options &rarr; Expert Advisors</strong>:</p>
+                                <div class="wh-url-box">
+                                    <span id="mt5-wh-url">http://127.0.0.1:3000</span>
+                                    <button class="btn-copy-wh" onclick="copyWhitelistUrl()"><i class="fa-solid fa-copy"></i></button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <button class="btn btn-auth" onclick="handleMT5Connection()">
+                            <i class="fa-solid fa-link"></i> ESTABLISH TERMINAL SYNC
+                        </button>
+                    </div>
+
+                    <!-- Connection pipeline dynamic loader -->
+                    <div class="mt5-sync-loader" id="mt5-sync-loader">
+                        <div class="sync-spinner">
+                            <i class="fa-solid fa-arrows-spin fa-spin"></i>
+                        </div>
+                        <h3 id="sync-stage-title">Initializing link...</h3>
+                        <div class="progress-bar-container">
+                            <div class="sync-progress-bar" id="sync-progress-bar"></div>
+                        </div>
+                        <ul class="sync-logs" id="sync-steps-log">
+                            <!-- Injected programmatically -->
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- 4. MAIN INTERACTIVE APP VIEW -->
+                <div id="view-app" class="screen-view">
+                    
+                    <!-- App Inner Header -->
+                    <header class="mobile-header">
+                        <div class="mobile-logo">
+                            <i class="fa-solid fa-compass-drafting logo-icon-sm"></i>
+                            <div class="mobile-logo-text">
+                                <h2>ELITE XAUUSD</h2>
+                                <span id="app-header-magic">Magic: 133777</span>
+                            </div>
+                        </div>
+                        <div class="sync-indicator">
+                            <span class="pulse-dot"></span>
+                            <span class="sync-label">SYNCED</span>
+                        </div>
+                    </header>
+
+                    <!-- Mobile Screen Body / Tab panes container -->
+                    <div class="mobile-body">
+                        
+                        <!-- TAB PANE 1: DASHBOARD -->
+                        <div id="pane-dashboard" class="tab-pane active">
+                            <!-- Live Chart View -->
+                            <div class="mobile-card chart-card-mobile">
+                                <div class="chart-header-mobile">
+                                    <div class="title-wrap">
+                                        <h3><i class="fa-solid fa-chart-line text-gold"></i> Live Market (XAUUSD)</h3>
+                                    </div>
+                                    <div class="price-pill" id="mobile-price-pill">
+                                        <span id="live-price">$0.00</span>
+                                        <i id="price-trend-icon" class="fa-solid fa-circle-notch fa-spin"></i>
+                                    </div>
+                                </div>
+                                <div class="chart-container-mobile">
+                                    <canvas id="liveChart"></canvas>
+                                </div>
+                                <div class="chart-footer-metrics">
+                                    <div class="metric-block">
+                                        <span class="lbl">Session</span>
+                                        <span class="val text-cyan" id="val-session">--</span>
+                                    </div>
+                                    <div class="metric-block">
+                                        <span class="lbl">Regime</span>
+                                        <span class="val text-gold" id="val-regime">--</span>
+                                    </div>
+                                    <div class="metric-block">
+                                        <span class="lbl">Spread</span>
+                                        <span class="val" id="val-spread">0 pts</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Account Health Snapshot -->
+                            <div class="mobile-card-grid">
+                                <div class="mini-card">
+                                    <span class="lbl">Equity</span>
+                                    <span class="val text-green" id="db-equity">$0.00</span>
+                                </div>
+                                <div class="mini-card">
+                                    <span class="lbl">Balance</span>
+                                    <span class="val" id="db-balance">$0.00</span>
+                                </div>
+                                <div class="mini-card">
+                                    <span class="lbl">Daily Profit</span>
+                                    <span class="val text-green" id="db-daily-profit">0.00%</span>
+                                </div>
+                                <div class="mini-card">
+                                    <span class="lbl">Drawdown</span>
+                                    <span class="val text-green" id="db-daily-dd">0.00%</span>
+                                </div>
+                            </div>
+
+                            <!-- Active Positions Cockpit -->
+                            <div class="mobile-card positions-card">
+                                <div class="card-header-flex">
+                                    <h3><i class="fa-solid fa-receipt text-cyan"></i> Active Positions</h3>
+                                    <span class="positions-count-badge" id="db-positions-badge">0 Active</span>
+                                </div>
+                                <div class="positions-list" id="db-positions-list">
+                                    <!-- Injected programmatically -->
+                                    <div class="empty-state-small">
+                                        <i class="fa-solid fa-folder-open"></i>
+                                        <p>No open positions in active terminal</p>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Margin and Performance Details -->
+                            <div class="mobile-card margin-card">
+                                <h3><i class="fa-solid fa-wallet text-cyan"></i> Margins & Safeguards</h3>
+                                <div class="margin-rows">
+                                    <div class="margin-row">
+                                        <span class="lbl">Free Margin (Level)</span>
+                                        <span class="val text-cyan" id="db-margin">$0.00 (0%)</span>
+                                    </div>
+                                    <div class="margin-row">
+                                        <span class="lbl">Floating Exposure</span>
+                                        <span class="val text-green" id="db-exposure">0.0 pips (0)</span>
+                                    </div>
+                                    <div class="margin-row">
+                                        <span class="lbl">Consecutive Losses</span>
+                                        <span class="val" id="db-losses">0 / 0</span>
+                                    </div>
+                                    <div class="margin-row">
+                                        <span class="lbl">News Filter Shield</span>
+                                        <span class="status-pill clear" id="db-news-status">--</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- TAB PANE 2: TERMINAL CONTROLS -->
+                        <div id="pane-controls" class="tab-pane">
+                            <!-- Strategy Toggle Grid -->
+                            <div class="mobile-card">
+                                <h3 class="card-title-sm"><i class="fa-solid fa-toggle-on text-gold"></i> Core MQL5 Strategy Toggles</h3>
+                                <p class="card-desc">Enable or disable trading models in real-time</p>
+                                <div class="strategy-toggles-grid">
+                                    <button class="strat-btn-mobile active" id="toggle-TP" onclick="toggleStrategy('TP')">
+                                        <span class="abbr">TP</span>
+                                        <span class="name">Trend Pullback</span>
+                                    </button>
+                                    <button class="strat-btn-mobile active" id="toggle-MB" onclick="toggleStrategy('MB')">
+                                        <span class="abbr">MB</span>
+                                        <span class="name">Momentum Break</span>
+                                    </button>
+                                    <button class="strat-btn-mobile active" id="toggle-LS" onclick="toggleStrategy('LS')">
+                                        <span class="abbr">LS</span>
+                                        <span class="name">Liquidity Sweep</span>
+                                    </button>
+                                    <button class="strat-btn-mobile active" id="toggle-SE" onclick="toggleStrategy('SE')">
+                                        <span class="abbr">SE</span>
+                                        <span class="name">Session Expand</span>
+                                    </button>
+                                    <button class="strat-btn-mobile active" id="toggle-MR" onclick="toggleStrategy('MR')">
+                                        <span class="abbr">MR</span>
+                                        <span class="name">Mean Revert</span>
+                                    </button>
+                                    <button class="strat-btn-mobile active" id="toggle-OB" onclick="toggleStrategy('OB')">
+                                        <span class="abbr">OB</span>
+                                        <span class="name">Order Block / FVG</span>
+                                    </button>
+                                </div>
+                            </div>
+
+                            <!-- Execution Command Deck -->
+                            <div class="mobile-card execution-card">
+                                <h3 class="card-title-sm"><i class="fa-solid fa-gamepad text-cyan"></i> Manual Trade Execution</h3>
+                                <div class="manual-buttons-mobile">
+                                    <button class="btn-action-mobile buy" onclick="manualTrade('BUY')">
+                                        <i class="fa-solid fa-arrow-trend-up"></i> BUY Lot Size: ATR
+                                    </button>
+                                    <button class="btn-action-mobile sell" onclick="manualTrade('SELL')">
+                                        <i class="fa-solid fa-arrow-trend-down"></i> SELL Lot Size: ATR
+                                    </button>
+                                </div>
+                                <div class="special-buttons-mobile">
+                                    <button class="btn-secondary-mobile" onclick="triggerBreakEven()">
+                                        <i class="fa-solid fa-lock"></i> MOVE SL TO BE
+                                    </button>
+                                    <button class="btn-secondary-mobile" id="btn-pause" onclick="toggleEnginePause()">
+                                        <i class="fa-solid fa-pause"></i> PAUSE ENGINE
+                                    </button>
+                                </div>
+                                <button class="btn-panic-mobile" onclick="panicCloseAll()">
+                                    <i class="fa-solid fa-triangle-exclamation"></i> EMERGENCY PANIC CLOSE ALL
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- TAB PANE 3: NEURAL STREAM -->
+                        <div id="pane-signals" class="tab-pane">
+                            <div class="mobile-card stream-card">
+                                <div class="stream-header">
+                                    <h3><i class="fa-solid fa-satellite-dish text-cyan"></i> Neural Signal Stream</h3>
+                                    <span class="badge" id="signal-count">0 Active</span>
+                                </div>
+                                <p class="card-desc">Real-time terminal execution triggers and regime shifts</p>
+                                <div class="signal-stream-mobile" id="signalStream">
+                                    <div class="empty-state">
+                                        <i class="fa-solid fa-wave-square"></i>
+                                        <p>Waiting for algorithm signals...</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- TAB PANE 4: PROFILE & OPERATOR MAILBOX -->
+                        <div id="pane-profile" class="tab-pane">
+                            <div class="mobile-card profile-info-card">
+                                <div class="profile-avatar">
+                                    <i class="fa-solid fa-user-shield"></i>
+                                </div>
+                                <h3 id="profile-operator-name">Beki Operator</h3>
+                                <p class="profile-role" id="profile-operator-email">operator@elite-systems.com</p>
+                                <span class="profile-status-badge" id="profile-lic-status">LICENSED</span>
+                            </div>
+
+                            <!-- Interactive Operator Mailbox (SSO & Crypto license delivery) -->
+                            <div class="mobile-card mailbox-card">
+                                <h3><i class="fa-solid fa-inbox text-cyan"></i> Operator Secure Mailbox</h3>
+                                <div class="mailbox-messages-list" id="mailbox-list">
+                                    <!-- Injected programmatically -->
+                                </div>
+                            </div>
+
+                            <div class="mobile-card profile-details-card">
+                                <h3><i class="fa-solid fa-circle-info text-gold"></i> Subscription Properties</h3>
+                                <div class="p-row">
+                                    <span class="label">Licensing Key</span>
+                                    <span class="value text-gold" id="profile-lic-key">XAU-ELITE-9988</span>
+                                </div>
+                                <div class="p-row">
+                                    <span class="label">Plan Tier</span>
+                                    <span class="value" id="profile-sub-tier">Monthly Subscription</span>
+                                </div>
+                                <div class="p-row">
+                                    <span class="label">Validity Status</span>
+                                    <span class="value text-green">ACTIVE (Valid until 2027)</span>
+                                </div>
+                            </div>
+
+                            <div class="mobile-card profile-details-card">
+                                <h3><i class="fa-solid fa-network-wired text-cyan"></i> Connection Sync</h3>
+                                <div class="p-row">
+                                    <span class="label">MT5 Host Server</span>
+                                    <span class="value" id="profile-mt5-server">ICMarkets-MT5-Live</span>
+                                </div>
+                                <div class="p-row">
+                                    <span class="label">Login Account ID</span>
+                                    <span class="value" id="profile-mt5-id">8829410</span>
+                                </div>
+                                <div class="p-row">
+                                    <span class="label">Sync Latency</span>
+                                    <span class="value text-green" id="profile-mt5-latency">62 ms</span>
+                                </div>
+                            </div>
+
+                            <div class="profile-actions">
+                                <button class="btn btn-disconnect" onclick="disconnectTerminal()">
+                                    <i class="fa-solid fa-unlink"></i> DISCONNECT MT5 TERMINAL
+                                </button>
+                                <button class="btn btn-revoke" onclick="revokeLicense()">
+                                    <i class="fa-solid fa-trash-can"></i> DE-REGISTER LICENSE KEY
+                                </button>
+                            </div>
+                        </div>
+
+                    </div>
+
+                    <!-- Bottom Navigation bar -->
+                    <nav class="bottom-nav">
+                        <button class="nav-tab-btn active" id="nav-btn-dashboard" onclick="switchMainTab('dashboard')">
+                            <i class="fa-solid fa-gauge-high"></i>
+                            <span>Dashboard</span>
+                        </button>
+                        <button class="nav-tab-btn" id="nav-btn-controls" onclick="switchMainTab('controls')">
+                            <i class="fa-solid fa-gamepad"></i>
+                            <span>Controls</span>
+                        </button>
+                        <button class="nav-tab-btn" id="nav-btn-signals" onclick="switchMainTab('signals')">
+                            <i class="fa-solid fa-satellite-dish"></i>
+                            <span>Signals</span>
+                        </button>
+                        <button class="nav-tab-btn" id="nav-btn-profile" onclick="switchMainTab('profile')">
+                            <i class="fa-solid fa-user-gear"></i>
+                            <span>Profile</span>
+                        </button>
+                    </nav>
+
+                </div>
+
+            </div>
+            
+            <!-- Home Indicator Bar for Mock iPhone/Android -->
+            <div class="phone-home-indicator"></div>
+        </div>
+    </div>
+
+    <!-- Mobile Footer Support Area -->
+    <footer class="app-footer">
+        <div class="support-channels">
+            <a href="https://t.me/tradelikeb" target="_blank"><i class="fa-brands fa-telegram"></i> t.me/tradelikeb</a>
+            <a href="mailto:Bekicrypto@gmail.com"><i class="fa-solid fa-envelope"></i> Bekicrypto@gmail.com</a>
+            <a href="https://wa.me/971527663165" target="_blank"><i class="fa-brands fa-whatsapp"></i> +971 52 766 3165</a>
+        </div>
+        <div class="copyright">
+            <span>© 2026 Elite Systems. Designed by <strong>Beki</strong>. All Rights Reserved.</span>
+        </div>
+    </footer>
+
+    <!-- Scripts -->
+    <script src="app.js"></script>
+</body>
+</html>

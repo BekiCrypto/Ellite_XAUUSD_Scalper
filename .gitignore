@@ -1,0 +1,12 @@
+# MetaTrader Compiled Binaries
+*.ex5
+*.ex4
+
+# OS Metadata
+.DS_Store
+Thumbs.db
+
+# Logs and Analytics
+*.log
+logs/
+analytics/
