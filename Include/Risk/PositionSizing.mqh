@@ -76,8 +76,41 @@ public:
       
       if(lotSize < minLot) lotSize = minLot;
       if(lotSize > maxLot) lotSize = maxLot;
-      
+
       return lotSize;
+     }
+
+   // Sum of money at risk (entry-to-SL distance) across all open EA positions, as % of balance.
+   // Used for Simultaneous Exposure Protection: caps aggregate risk across concurrent positions,
+   // not just the risk of each individual trade in isolation.
+   static double     GetOpenRiskPercent()
+     {
+      double balance = AccountInfoDouble(ACCOUNT_BALANCE);
+      if(balance <= 0.0) return 0.0;
+
+      double tickSize = SymbolInfoDouble(_Symbol, SYMBOL_TRADE_TICK_SIZE);
+      double tickValue = SymbolInfoDouble(_Symbol, SYMBOL_TRADE_TICK_VALUE);
+      if(tickSize <= 0.0 || tickValue <= 0.0) return 0.0;
+
+      double totalRiskMoney = 0.0;
+      for(int i = PositionsTotal() - 1; i >= 0; i--)
+        {
+         ulong ticket = PositionGetTicket(i);
+         if(ticket == 0) continue;
+         if(PositionGetString(POSITION_SYMBOL) != _Symbol) continue;
+         if((ulong)PositionGetInteger(POSITION_MAGIC) != GlobalConfig.GetMagicNumber()) continue;
+
+         double sl = PositionGetDouble(POSITION_SL);
+         if(sl == 0.0) continue; // no stop attached; can't quantify, don't block on the unknown
+
+         double openPrice = PositionGetDouble(POSITION_PRICE_OPEN);
+         double volume = PositionGetDouble(POSITION_VOLUME);
+         double slDistance = MathAbs(openPrice - sl);
+
+         totalRiskMoney += (slDistance / tickSize) * tickValue * volume;
+        }
+
+      return (totalRiskMoney / balance) * 100.0;
      }
   };
 

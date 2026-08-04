@@ -69,14 +69,21 @@ public:
 
       double atrH1 = m_atrH1Buffer[0];
       double atrM15 = m_atrM15Buffer[0];
-      
+
       double fastEma = m_emaFastBuffer[0];
       double slowEma = m_emaSlowBuffer[0];
-      
-      // Determine Volatility (Arbitrary baseline points for XAUUSD, should be dynamic/configurable)
-      bool isHighVol = (atrH1 > 5.0); // > 50 pips H1 ATR
-      bool isLowVol = (atrH1 < 1.5);  // < 15 pips H1 ATR
-      
+
+      // Volatility thresholds as % of price, not fixed dollars: gold's price level drifts materially
+      // over time (e.g. ~$1800 to ~$3000+), so a fixed $5/$1.5 ATR band silently drifts out of
+      // calibration. 0.25%/0.075% reproduce the original $5/$1.5 split at ~$2000 gold and stay
+      // correct as the price level moves.
+      double currentPrice = SymbolInfoDouble(_Symbol, SYMBOL_BID);
+      if(currentPrice <= 0.0) return REGIME_DEAD; // no valid price feed, don't guess
+
+      double atrH1PercentOfPrice = (atrH1 / currentPrice) * 100.0;
+      bool isHighVol = (atrH1PercentOfPrice > 0.25);
+      bool isLowVol = (atrH1PercentOfPrice < 0.075);
+
       if(isLowVol) return REGIME_DEAD;
       
       // Determine Trend

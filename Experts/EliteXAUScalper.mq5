@@ -48,10 +48,10 @@ input string   InpDevEmail    = "Bekicrypto@gmail.com"; // Support Email
 input string   InpDevWhatsApp = "+971527663165";    // WhatsApp Business
 
 input group "=== Risk Management ==="
-input double   InpRiskPercent = 15.0;           // Risk per trade (%)
+input double   InpRiskPercent = 3.0;            // Risk per trade (%)
 input double   InpMinLotSize = 0.01;            // Minimum Lot Size
-input double   InpMaxDailyDrawdown = 10.0;      // Max Daily Drawdown (%)
-input double   InpMaxDailyProfit = 25.0;        // Max Daily Profit (%)
+input double   InpMaxDailyDrawdown = 5.0;       // Max Daily Drawdown (%)
+input double   InpMaxDailyProfit = 10.0;        // Max Daily Profit (%)
 input int      InpMaxConsecutiveLosses = 4;     // Max Consecutive Losses
 input int      InpMaxConcurrentTrades = 5;      // Max Concurrent Trades
 input int      InpMaxLatencyMs = 500;           // Max Auto-Throttle Latency (ms)
@@ -62,9 +62,9 @@ input bool     InpEnableSessionFilter = true;   // Enable Session Filter
 input bool     InpEnableNewsFilter = true;      // Enable High-Impact USD News Filter
 input int      InpNewsMinutesBefore = 30;       // Stop Trading X mins before News
 input int      InpNewsMinutesAfter = 30;        // Resume Trading X mins after News
-input int      InpMaxSpreadPoints = 50;         // Maximum Spread (points)
+input int      InpMaxSpreadPoints = 20;         // Maximum Spread (points)
 input int      InpMaxSlippagePoints = 5;        // Max Slippage (Points)
-input double   InpMinConfidence = 65.0;         // Min Strategy Confidence
+input double   InpMinConfidence = 75.0;         // Min Strategy Confidence
 input double   InpTrailingActivationATR = 1.2;  // Trailing Stop Activation (ATR Multiplier)
 
 input group "=== Identification ==="
@@ -228,6 +228,13 @@ void OnTick()
    // Update Risk Engine day change checks
    if(CheckPointer(RiskEng) != POINTER_INVALID)
       RiskEng.UpdateRiskMetrics();
+
+   // Kill switch: daily drawdown breach force-closes all open exposure, not just new entries
+   if(CheckPointer(RiskEng) != POINTER_INVALID && RiskEng.ConsumeDrawdownKillSwitch())
+     {
+      Log.Error("[RISK] Daily drawdown kill switch triggered. Force-closing all open positions.");
+      Manager.CloseAll();
+     }
 
    // Pipeline Step 1: Manage Open Positions
    double atrH1 = 0.0, atrM15 = 0.0, atrM5 = 0.0;

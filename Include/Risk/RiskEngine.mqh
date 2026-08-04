@@ -99,9 +99,29 @@ public:
 
       // 7. Calculate Lot Size with dynamic risk scaling
       outLotSize = CPositionSizing::CalculateLotSize(entryPrice, signal.suggestedSL, signal.confidence, regime);
-      
+
       if(outLotSize <= 0.0)
          return false;
+
+      // 8. Simultaneous Exposure Protection: cap aggregate open + new risk to the daily drawdown ceiling.
+      // Without this, N concurrent strategy positions (InpMaxConcurrentTrades) can each pass their own
+      // isolated risk check while their combined worst-case loss still blows past the daily DD limit.
+      double tickSize = SymbolInfoDouble(_Symbol, SYMBOL_TRADE_TICK_SIZE);
+      double tickValue = SymbolInfoDouble(_Symbol, SYMBOL_TRADE_TICK_VALUE);
+      double balance = AccountInfoDouble(ACCOUNT_BALANCE);
+      if(tickSize > 0.0 && tickValue > 0.0 && balance > 0.0)
+        {
+         double slDistance = MathAbs(entryPrice - signal.suggestedSL);
+         double newTradeRiskPercent = ((slDistance / tickSize) * tickValue * outLotSize / balance) * 100.0;
+         double openRiskPercent = CPositionSizing::GetOpenRiskPercent();
+
+         if(openRiskPercent + newTradeRiskPercent > GlobalConfig.GetMaxDailyDrawdown())
+           {
+            Log.Warning(StringFormat("Aggregate exposure guard: open risk %.2f%% + new trade %.2f%% would exceed max daily drawdown %.2f%%. Setup rejected.",
+                                      openRiskPercent, newTradeRiskPercent, GlobalConfig.GetMaxDailyDrawdown()));
+            return false;
+           }
+        }
 
       return true;
      }
@@ -119,8 +139,17 @@ public:
 
    void              UpdateRiskMetrics()
      {
+      // IsTradingAllowed() calls CheckDayChange() itself and also evaluates the DD/profit/loss gates,
+      // which is what arms the kill switch below. Must run every tick, not only when a signal exists,
+      // or a breach on a quiet tick (no candidate trade) would never get flagged.
       if(CheckPointer(m_ddProtection) != POINTER_INVALID)
-         m_ddProtection.CheckDayChange();
+         m_ddProtection.IsTradingAllowed();
+     }
+
+   // One-shot: true exactly once on the tick the daily drawdown kill switch fires.
+   bool              ConsumeDrawdownKillSwitch()
+     {
+      return m_ddProtection.ConsumeKillSwitch();
      }
 
    int               GetConsecutiveLosses() const { return m_ddProtection.GetConsecutiveLosses(); }

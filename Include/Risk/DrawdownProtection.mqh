@@ -22,6 +22,7 @@ private:
    bool              m_drawdownLogged;
    bool              m_profitLockLogged;
    bool              m_profitTargetLogged;
+   bool              m_killSwitchPending;
 
 public:
                      CDrawdownProtection()
@@ -34,6 +35,18 @@ public:
 
    int               GetConsecutiveLosses() const { return m_consecutiveLosses; }
 
+   // One-shot trigger: true exactly once, the tick the daily DD kill switch first fires.
+   // Lets the caller force-close open exposure instead of only blocking new entries.
+   bool              ConsumeKillSwitch()
+     {
+      if(m_killSwitchPending)
+        {
+         m_killSwitchPending = false;
+         return true;
+        }
+      return false;
+     }
+
     // Call this at the start of a new day
    void              ResetDailyTracking()
      {
@@ -45,6 +58,7 @@ public:
       m_drawdownLogged = false;
       m_profitLockLogged = false;
       m_profitTargetLogged = false;
+      m_killSwitchPending = false;
      }
 
    // Call this when a trade closes
@@ -125,9 +139,10 @@ public:
            {
             if(!m_drawdownLogged)
               {
-               Log.Error(StringFormat("Max daily drawdown %.2f%% reached! Kill switch activated. Balance: %.2f, Equity: %.2f", 
+               Log.Error(StringFormat("Max daily drawdown %.2f%% reached! Kill switch activated. Balance: %.2f, Equity: %.2f",
                                       drawdownPercent, startOfDayBalance, currentEquity));
                m_drawdownLogged = true;
+               m_killSwitchPending = true;
               }
             return false;
            }

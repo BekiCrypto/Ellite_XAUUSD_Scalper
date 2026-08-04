@@ -4,10 +4,10 @@ InpDevTelegram=t.me/tradelikeb
 InpDevEmail=Bekicrypto@gmail.com
 InpDevWhatsApp=+971527663165
 ; === Risk Management ===
-InpRiskPercent=15.0
+InpRiskPercent=3.0
 InpMinLotSize=0.01
-InpMaxDailyDrawdown=10.0
-InpMaxDailyProfit=25.0
+InpMaxDailyDrawdown=5.0
+InpMaxDailyProfit=10.0
 InpMaxConsecutiveLosses=4
 InpMaxConcurrentTrades=5
 InpMaxLatencyMs=500
@@ -17,9 +17,9 @@ InpEnableSessionFilter=true
 InpEnableNewsFilter=true
 InpNewsMinutesBefore=30
 InpNewsMinutesAfter=30
-InpMaxSpreadPoints=50
+InpMaxSpreadPoints=20
 InpMaxSlippagePoints=5
-InpMinConfidence=65.0
+InpMinConfidence=75.0
 InpTrailingActivationATR=1.2
 ; === Identification ===
 InpMagicNumber=133777

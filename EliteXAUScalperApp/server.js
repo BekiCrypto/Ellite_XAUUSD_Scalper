@@ -5,6 +5,16 @@
    Links: MT5 (WebRequest) <--> Node.js Gateway <--> Mobile Web Client
    ========================================================================== */
 
+/* DEMO-STAGE NOTICE
+   The telemetry/command endpoints (/api/mt5/*) are real and are what the EA
+   actually talks to. The account/monetization endpoints below (google-sso,
+   checkout, confirm-payment) are UI-prototype stubs: no real OAuth, no real
+   blockchain verification. confirm-payment currently accepts any string of
+   10+ characters as a "valid" tx hash and issues a license unconditionally.
+   The checkout screen shows a real-format BSC wallet address - do not deploy
+   this publicly and imply it processes real payments until that's wired to
+   actual verification (e.g. checking the tx via a BscScan API call). */
+
 const http = require('http');
 const fs = require('fs');
 const path = require('path');
@@ -328,7 +338,9 @@ const server = http.createServer(async (req, res) => {
     }
 
     // Endpoint: POST /api/client/confirm-payment
-    // Validates USDT BEP20 TxHash, registers license key, and pushes mailbox delivery
+    // DEMO STUB: does not verify anything on-chain. Any 10+ char string passes and
+    // gets a license key. Wire this to a real BscScan (or similar) lookup before
+    // treating this as an actual payment gate.
     if (pathname === '/api/client/confirm-payment' && req.method === 'POST') {
         try {
             const data = await parseRequestBody(req);

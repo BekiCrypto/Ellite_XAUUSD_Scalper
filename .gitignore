@@ -6,7 +6,9 @@
 .DS_Store
 Thumbs.db
 
-# Logs and Analytics
+# Runtime output (Files/logs, Files/analytics per the SDD's layout) - anchored to root
+# and to Files/ specifically so it can't shadow the Include/Analytics/ source module
+# on case-insensitive filesystems (macOS defaults core.ignorecase=true).
 *.log
-logs/
-analytics/
+/Files/logs/
+/Files/analytics/
