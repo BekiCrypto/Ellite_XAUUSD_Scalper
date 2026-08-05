@@ -44,6 +44,7 @@ struct SMarketEnvironment
    double             atrM5;
    bool               isSpreadHealthy;
    bool               isVolatilityHealthy;
+   ENUM_TREND_DIRECTION trendDirection; // H1 macro bias
   };
 
 //--- Risk profile configuration for a trade

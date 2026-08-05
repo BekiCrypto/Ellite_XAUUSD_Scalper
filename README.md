@@ -32,11 +32,44 @@ scoring → risk validation → execution → trade management → analytics. Re
   tick); `GetCurrentDrawdown()` now tracks the day's actual peak, matching the dashboard's
   "Daily Peak DD" label.
 
-**Not yet done:** no strategy in this repo has been backtested. The fixes above make the
-system safe to *run* (won't blow up on a missing include, won't risk-of-ruin on default
-settings) — they are not evidence of a profitable edge. Run the Strategy Tester across
-multiple periods and regimes (see `MQL5/Profiles/Tester/` for prior test configs) before
-this touches a live account.
+**Also added:** an H1 macro trend-direction filter (`RegimeDetector::GetH1TrendDirection()`,
+`SMarketEnvironment.trendDirection`) — this was in the original design spec (SDD Module 9,
+"H1: macro directional bias") but never implemented. Liquidity Sweep and Trend Pullback now
+both refuse to fire against the H1 bias (no shorting sweeps into an H1 uptrend, no buying
+pullbacks against an H1 downtrend). Per-strategy `InpEnable*` inputs were also added so any
+of the 6 strategies can be toggled independently via `.set` file, for isolating performance.
+
+## Backtest findings (2026-08, IC Markets demo, 100% real ticks)
+
+Real results, not estimates — full 3-month run (Apr–Jun 2026), XAUUSD M5:
+
+| Config | Trades | Net P&L | Profit Factor |
+|---|---|---|---|
+| All 6 strategies | 97 (2wk sample) | -$1,553 | 0.50 |
+| Liquidity Sweep alone | 327 | -$1,336 | 0.89 |
+| **Liquidity Sweep + H1 filter** | **179** | **-$488** | **0.92** |
+| Trend Pullback + H1 filter alone | 341 | -$1,315 | 0.89 |
+| Both H1-filtered, combined | 394 | -$1,867 | 0.85 |
+
+The H1 filter is a real, validated improvement — it roughly halved Liquidity Sweep's trade
+count (filtering out counter-trend setups) and cut the loss by 63%. **It is not enough to
+make the system profitable.** Best validated config found so far is Liquidity Sweep alone
+with the H1 filter; Trend Pullback should stay disabled — the filter helped it some but not
+enough, and combining it with Liquidity Sweep makes the combination worse, not better.
+
+One more thing worth recording here because it's a useful lesson for whoever tunes this
+next: a wider stop-loss buffer on Liquidity Sweep (0.4x ATR vs 0.2x) looked like a
+breakthrough on an April–May training split (profit factor 0.99, essentially breakeven) —
+and fell apart on the untouched June holdout (profit factor 0.79). That change was reverted.
+**Any future parameter change must be validated on a period it wasn't tuned against before
+being trusted** — this codebase's own engineering rules ban curve-fit-only logic for exactly
+this reason, and it's easy to fool yourself without a holdout split.
+
+**Not yet done:** Order Block, Mean Reversion, and Session Expansion haven't had the same
+isolate-and-validate treatment yet. Only ~3 months of tick history was available to test
+against, which is thin for anything beyond a first pass. No configuration tested so far has
+a demonstrated positive, holdout-validated edge — treat this as a safe-to-run research
+platform, not a proven profitable system, until that changes.
 
 ## Repository structure
 
@@ -100,6 +133,7 @@ All risk, filter, and execution parameters are `input` values on the EA — see
 | `InpMaxDailyProfit` | 10.0% | Daily target with a trailing profit lock at 50% |
 | `InpMaxConcurrentTrades` | 5 | One position per strategy, capped in aggregate |
 | `InpMinConfidence` | 75.0 | Minimum confidence score to act on a signal |
+| `InpEnableTrendPullback` / `InpEnableMomentumBreakout` / `InpEnableLiquiditySweep` / `InpEnableSessionExpansion` / `InpEnableMeanReversion` / `InpEnableOrderBlock` | true | Per-strategy on/off, for isolating performance |
 
 ## Risk disclaimer
 

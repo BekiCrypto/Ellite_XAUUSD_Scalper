@@ -66,7 +66,9 @@ public:
       double slowEma = m_emaSlowBuffer[0];
       
       // Basic logic: Fast EMA > Slow EMA (Uptrend) -> Price pulls back to Fast EMA -> Rejection (Close > Fast EMA)
-      if(fastEma > slowEma)
+      // Require the H1 macro bias not to actively disagree - an M5 EMA "uptrend" against an H1 downtrend
+      // is a low-quality continuation bet, not a real pullback-in-trend setup.
+      if(fastEma > slowEma && env.trendDirection != TREND_DOWN)
         {
          if(close2 < fastEma && close1 > fastEma)
            {
@@ -78,7 +80,7 @@ public:
             signal.comment = m_strategyName + " Buy";
            }
         }
-      else if(fastEma < slowEma)
+      else if(fastEma < slowEma && env.trendDirection != TREND_UP)
         {
          if(close2 > fastEma && close1 < fastEma)
            {

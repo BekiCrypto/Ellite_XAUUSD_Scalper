@@ -72,6 +72,14 @@ input ulong    InpMagicNumber = 133777;         // EA Magic Number
 input string   InpTradeComment = "EliteXAUScalper"; // Trade Comment
 input string   InpAuthToken = "ELITE_GATEWAY_TOKEN_XYZ"; // Bridge Auth Token
 
+input group "=== Strategy Selection ==="
+input bool     InpEnableTrendPullback = true;   // Enable Trend Pullback
+input bool     InpEnableMomentumBreakout = true; // Enable Momentum Breakout
+input bool     InpEnableLiquiditySweep = true;  // Enable Liquidity Sweep
+input bool     InpEnableSessionExpansion = true; // Enable Session Expansion
+input bool     InpEnableMeanReversion = true;   // Enable Mean Reversion
+input bool     InpEnableOrderBlock = true;      // Enable Order Block / FVG
+
 //--- System Components
 CSessionFilter       *SessionFlt;
 CSpreadFilter        *SpreadFlt;
@@ -112,6 +120,12 @@ int OnInit()
    GlobalConfig.SetExecutionParams(InpMagicNumber, InpMaxSlippagePoints, InpTradeComment);
    GlobalConfig.SetTrailingParams(InpTrailingActivationATR);
    GlobalConfig.SetSessionFilterEnabled(InpEnableSessionFilter);
+   GlobalConfig.SetStrategyEnabled(0, InpEnableTrendPullback);
+   GlobalConfig.SetStrategyEnabled(1, InpEnableMomentumBreakout);
+   GlobalConfig.SetStrategyEnabled(2, InpEnableLiquiditySweep);
+   GlobalConfig.SetStrategyEnabled(3, InpEnableSessionExpansion);
+   GlobalConfig.SetStrategyEnabled(4, InpEnableMeanReversion);
+   GlobalConfig.SetStrategyEnabled(5, InpEnableOrderBlock);
 
    // Initialize Modules
    SessionFlt = new CSessionFilter();
@@ -297,6 +311,7 @@ void OnTick()
    env.atrH1 = atrH1;
    env.atrM15 = atrM15;
    env.atrM5 = atrM5;
+   env.trendDirection = RegimeDet.GetH1TrendDirection();
    
    // Pipeline Step 4: Strategy Selection
    STradeSignal signals[NUM_STRATEGIES];

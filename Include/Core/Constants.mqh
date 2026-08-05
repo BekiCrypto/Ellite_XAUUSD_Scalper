@@ -53,4 +53,12 @@ enum ENUM_SIGNAL_TYPE
    SIGNAL_SELL
   };
 
+//--- H1 macro directional bias (SDD Module 9: "H1: Macro directional bias")
+enum ENUM_TREND_DIRECTION
+  {
+   TREND_UP,
+   TREND_DOWN,
+   TREND_NEUTRAL
+  };
+
 #endif

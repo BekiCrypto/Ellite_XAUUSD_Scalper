@@ -19,12 +19,16 @@ private:
    
    int               m_emaFastHandle;
    int               m_emaSlowHandle;
-   
+   int               m_emaH1FastHandle;
+   int               m_emaH1SlowHandle;
+
    double            m_atrH1Buffer[];
    double            m_atrM15Buffer[];
    double            m_atrM5Buffer[];
    double            m_emaFastBuffer[];
    double            m_emaSlowBuffer[];
+   double            m_emaH1FastBuffer[];
+   double            m_emaH1SlowBuffer[];
 
 public:
                      CRegimeDetector()
@@ -34,6 +38,8 @@ public:
                         ArraySetAsSeries(m_atrM5Buffer, true);
                         ArraySetAsSeries(m_emaFastBuffer, true);
                         ArraySetAsSeries(m_emaSlowBuffer, true);
+                        ArraySetAsSeries(m_emaH1FastBuffer, true);
+                        ArraySetAsSeries(m_emaH1SlowBuffer, true);
                        }
                     ~CRegimeDetector()
                        {
@@ -42,6 +48,8 @@ public:
                         IndicatorRelease(m_atrHandleM5);
                         IndicatorRelease(m_emaFastHandle);
                         IndicatorRelease(m_emaSlowHandle);
+                        IndicatorRelease(m_emaH1FastHandle);
+                        IndicatorRelease(m_emaH1SlowHandle);
                        }
 
    bool              Initialize()
@@ -49,15 +57,36 @@ public:
       m_atrHandleH1 = iATR(_Symbol, PERIOD_H1, 14);
       m_atrHandleM15 = iATR(_Symbol, PERIOD_M15, 14);
       m_atrHandleM5 = iATR(_Symbol, PERIOD_M5, 14);
-      
+
       m_emaFastHandle = iMA(_Symbol, PERIOD_M15, 20, 0, MODE_EMA, PRICE_CLOSE);
       m_emaSlowHandle = iMA(_Symbol, PERIOD_M15, 50, 0, MODE_EMA, PRICE_CLOSE);
-      
+      m_emaH1FastHandle = iMA(_Symbol, PERIOD_H1, 20, 0, MODE_EMA, PRICE_CLOSE);
+      m_emaH1SlowHandle = iMA(_Symbol, PERIOD_H1, 50, 0, MODE_EMA, PRICE_CLOSE);
+
       if(m_atrHandleH1 == INVALID_HANDLE || m_atrHandleM15 == INVALID_HANDLE || m_atrHandleM5 == INVALID_HANDLE ||
-         m_emaFastHandle == INVALID_HANDLE || m_emaSlowHandle == INVALID_HANDLE)
+         m_emaFastHandle == INVALID_HANDLE || m_emaSlowHandle == INVALID_HANDLE ||
+         m_emaH1FastHandle == INVALID_HANDLE || m_emaH1SlowHandle == INVALID_HANDLE)
          return false;
-         
+
       return true;
+     }
+
+   // SDD Module 9 (Multi-Timeframe Engine): H1 macro directional bias for lower-timeframe
+   // strategies to filter against, so reversal-style setups don't fight the higher-timeframe trend.
+   ENUM_TREND_DIRECTION GetH1TrendDirection()
+     {
+      if(CopyBuffer(m_emaH1FastHandle, 0, 0, 1, m_emaH1FastBuffer) <= 0) return TREND_NEUTRAL;
+      if(CopyBuffer(m_emaH1SlowHandle, 0, 0, 1, m_emaH1SlowBuffer) <= 0) return TREND_NEUTRAL;
+
+      double fast = m_emaH1FastBuffer[0];
+      double slow = m_emaH1SlowBuffer[0];
+      if(slow == 0.0) return TREND_NEUTRAL;
+
+      // Require a meaningful separation (not just fast > slow by a hair) before calling it a bias
+      double separationPercent = MathAbs(fast - slow) / slow * 100.0;
+      if(separationPercent < 0.05) return TREND_NEUTRAL;
+
+      return (fast > slow) ? TREND_UP : TREND_DOWN;
      }
 
    ENUM_MARKET_REGIME DetectRegime()

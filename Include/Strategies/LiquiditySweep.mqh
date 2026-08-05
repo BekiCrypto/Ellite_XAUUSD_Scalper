@@ -70,7 +70,9 @@ public:
       double low1 = iLow(_Symbol, PERIOD_M5, 1);
       
       // Sweep High (Stop Hunt): Price went above recent highest high, but closed below it (pin bar / rejection)
-      if(high1 > highestHigh && close1 < highestHigh)
+      // Only take the short if the H1 macro bias isn't actively bullish - selling a sweep into a strong
+      // H1 uptrend is fighting the higher-timeframe flow, not "trading with liquidity".
+      if(high1 > highestHigh && close1 < highestHigh && env.trendDirection != TREND_UP)
         {
          // Strong rejection?
          if((high1 - close1) > (env.atrM5 * 0.7))
@@ -83,7 +85,8 @@ public:
            }
         }
       // Sweep Low: Price went below recent lowest low, but closed above it
-      else if(low1 < lowestLow && close1 > lowestLow)
+      // Mirror guard: don't buy a sweep into a strong H1 downtrend.
+      else if(low1 < lowestLow && close1 > lowestLow && env.trendDirection != TREND_DOWN)
         {
          if((close1 - low1) > (env.atrM5 * 0.7))
            {
