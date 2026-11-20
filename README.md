@@ -145,4 +145,4 @@ demo account before deploying to live. See the full disclaimer in the
 ## Support
 
 - Telegram: [t.me/tradelikeb](https://t.me/tradelikeb)
-- Email: [Bekicrypto@gmail.com](mailto:Bekicrypto@gmail.com)
+- WhatsApp: https://wa.me/+971527663165
